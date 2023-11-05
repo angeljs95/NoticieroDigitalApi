@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns: th="http://www.thymeleaf.org">
+    <head>
+        <title> modificar noticia</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" 
+              integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    </head>
+    <body style="background-color: grey;">
+
+        <header class="p-3 text-bg-dark">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                        <li><a href= "/"  class="nav-link px-2 text-secondary">Inicio</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Editor
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li><a class="dropdown-item" th:href="@{/noticia/registrar}">Crear noticia</a></li>
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li><a class="dropdown-item" th:href="@{/noticia/lista}">Listar noticias</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Noticias
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li><a class="dropdown-item" th:href="@{/noticia/lista}">Ver noticias</a></li>
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li><a class="dropdown-item" th:href="@{/noticia/lista}">Listar noticias</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               Iniciar Sesion 
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li><a class="dropdown-item" th:href="@{/editorial/registrar}">Crear Editorial</a></li>
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li><a class="dropdown-item" th:href="@{/editorial/lista}">Listar Editoriales</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                        <input type="search" class="form-control form-control-dark text-bg-white" placeholder="Search..." aria-label="Search"/>
+                    </form>
+
+                    <div class="text-end">
+
+                        <button type="button" class="btn btn-warning">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <br>
+
+        <header style="text-align: center">
+            <div class="container">
+                <h2>Modificar Noticia</h2>
+                <br>
+            </div>
+       </header>
+
+       <div class="container" style="text-align: center;">
+        <form th:action="@{/noticia/modificar/__${noticia.id}__}" method="POST">
+
+            <div th:if="${error != null}" class="card text-white bg-danger mb-3 mensajeError" >
+                <div class="card-body">
+                    <h5 class="card-title">Error 👎</h5>
+                    <p class="card-text" th:text="${error}"></p>
+                </div>
+            </div>
+            <div th:if="${exito != null}" class="card text-white bg-success mb-3 mt-3 mensajeExito" >
+                <div class="card-body">
+                    <h5 class="card-title">Exito!</h5>
+                    <p class="card-text" th:text="${exito}"></p>
+                </div>
+            </div>
+
+            <input hidden th:value="${id}" name="id">
+
+            <div class="mb-3">
+              <label for="tituloo" class="form-label">modificar el titulo</label> <br>
+              <input th:value="${noticia.titulo}" type="text" class="form-control" id="tituloo" name="titulo" placeholder="Titulo de noticia" >
+              <div id="emailHelp" class="form-text">El titulo debe ser unico.</div>
+            </div>
+            <div class="mb-3">
+              <label for="cuerpo" class="form-label"> modificar el Cuerpo de noticia</label> <br>
+              <input  th:value="${noticia.cuerpo}" type="text" class="form-control" id="cuerpo" name="cuerpo" placeholder="contenido">
+            </div>
+
+            
+           
+
+            <button type="submit" class="btn btn-primary"> Actualizar </button><br>
+             <a th:href="@{/noticia/lista}" class="btn btn-primary"> <i class="fas fa-feather-alt">   </i>Volver</a> 
+
+          </form>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    </body>
+</html>
