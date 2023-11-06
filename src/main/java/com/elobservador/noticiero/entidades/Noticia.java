@@ -8,29 +8,25 @@ import java.util.Date;
 
 @Entity
 public class Noticia {
-    
+
     @Id
-    @GeneratedValue (strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     private String titulo;
+    private String copete;
     private String cuerpo;
-    
+
+    @OneToMany
+    private Imagen imagen;
+
+    private boolean visualizar;
     @Temporal(TemporalType.DATE)
     private Date alta;
-    
-    private boolean visualizar;
-    
-    public Noticia(){
-        
-    }
 
-    public Noticia(Long id, String titulo, String cuerpo, Date alta, boolean visualizar) {
-        this.id = id;
-        this.titulo = titulo;
-        this.cuerpo = cuerpo;
-        this.alta = alta;
-        this.visualizar = visualizar;
+
+    public Noticia() {
+
     }
 
     public Long getId() {
@@ -49,6 +45,14 @@ public class Noticia {
         this.titulo = titulo;
     }
 
+    public String getCopete() {
+        return copete;
+    }
+
+    public void setCopete(String copete) {
+        this.copete = copete;
+    }
+
     public String getCuerpo() {
         return cuerpo;
     }
@@ -57,12 +61,12 @@ public class Noticia {
         this.cuerpo = cuerpo;
     }
 
-    public Date getAlta() {
-        return alta;
+    public Imagen getImagen() {
+        return imagen;
     }
 
-    public void setAlta(Date alta) {
-        this.alta = alta;
+    public void setImagen(Imagen imagen) {
+        this.imagen = imagen;
     }
 
     public boolean isVisualizar() {
@@ -72,8 +76,12 @@ public class Noticia {
     public void setVisualizar(boolean visualizar) {
         this.visualizar = visualizar;
     }
-    
-    
-    
-    
+
+    public Date getAlta() {
+        return alta;
+    }
+
+    public void setAlta(Date alta) {
+        this.alta = alta;
+    }
 }
