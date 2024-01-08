@@ -2,12 +2,17 @@
 package com.elobservador.noticiero.entidades;
 
 import jakarta.persistence.*;
+import jdk.jfr.Name;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
-public class Noticia {
+@Table(name = "Noticias")
+@PrimaryKeyJoinColumn(name = "id")
+public class Noticia implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -17,15 +22,26 @@ public class Noticia {
     private String copete;
     private String cuerpo;
 
-    @OneToMany
+    @ManyToOne
+    private Periodista periodista;
+
     private Imagen imagen;
 
-    private boolean visualizar;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Imagen> albumImagenes;
+
+    private boolean estadoNoticia;
+
     @Temporal(TemporalType.DATE)
     private Date alta;
 
+    @OneToMany
+    private List<Comentario> comentarios;
 
-    public Noticia() {
+
+    //-------------------------Empiezan constructores, getters and setters ---------------------
+
+    public Noticia(){
 
     }
 
@@ -61,6 +77,14 @@ public class Noticia {
         this.cuerpo = cuerpo;
     }
 
+    public Periodista getPeriodista() {
+        return periodista;
+    }
+
+    public void setPeriodista(Periodista periodista) {
+        this.periodista = periodista;
+    }
+
     public Imagen getImagen() {
         return imagen;
     }
@@ -69,12 +93,20 @@ public class Noticia {
         this.imagen = imagen;
     }
 
-    public boolean isVisualizar() {
-        return visualizar;
+    public List<Imagen> getAlbumImagenes() {
+        return albumImagenes;
     }
 
-    public void setVisualizar(boolean visualizar) {
-        this.visualizar = visualizar;
+    public void setAlbumImagenes(List<Imagen> albumImagenes) {
+        this.albumImagenes = albumImagenes;
+    }
+
+    public boolean isEstadoNoticia() {
+        return estadoNoticia;
+    }
+
+    public void setEstadoNoticia(boolean estadoNoticia) {
+        this.estadoNoticia = estadoNoticia;
     }
 
     public Date getAlta() {
@@ -83,5 +115,29 @@ public class Noticia {
 
     public void setAlta(Date alta) {
         this.alta = alta;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    @Override
+    public String toString() {
+        return "Noticia{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", copete='" + copete + '\'' +
+                ", cuerpo='" + cuerpo + '\'' +
+                ", periodista=" + periodista +
+                ", imagen=" + imagen +
+                ", albumImagenes=" + albumImagenes +
+                ", estadoNoticia=" + estadoNoticia +
+                ", alta=" + alta +
+                ", comentarios=" + comentarios +
+                '}';
     }
 }

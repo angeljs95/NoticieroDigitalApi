@@ -6,7 +6,7 @@ import com.elobservador.noticiero.excepcions.MiExceptions;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.elobservador.noticiero.repositorio.NoticiaRepositorio;
+import com.elobservador.noticiero.repositorio.NoticiaRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +17,7 @@ import java.util.Optional;
 public class NoticiaService {
     
     @Autowired
-    NoticiaRepositorio noticiaRepositorio;
+    NoticiaRepository noticiaRepository;
     
     @Transactional
     public void crearNoticia(Long id, String titulo, String cuerpo ) throws MiExceptions {
@@ -30,42 +30,42 @@ public class NoticiaService {
         noticia.setCuerpo(cuerpo);
         noticia.setVisualizar(true);
        
-        noticiaRepositorio.save(noticia);     
+        noticiaRepository.save(noticia);
     }
     
     public List<Noticia> listarNoticias(){
         
         List<Noticia> noticias= new ArrayList();
         
-        noticias= noticiaRepositorio.findAll();
+        noticias= noticiaRepository.findAll();
         return noticias;
     }
     
     public void modificarNoticia(String titulo, String cuerpo, Long id) throws MiExceptions {
         validar(id, titulo,cuerpo);
-        Optional <Noticia> respuesta= noticiaRepositorio.findById(id);
+        Optional <Noticia> respuesta= noticiaRepository.findById(id);
         
         if(respuesta.isPresent()){
             Noticia noticia = respuesta.get();
             noticia.setTitulo(titulo);
             noticia.setCuerpo(cuerpo);
-            noticiaRepositorio.save(noticia);
+            noticiaRepository.save(noticia);
         }
     }
     
     public void darBaja(Long id){
         
-        Optional <Noticia> respuesta= noticiaRepositorio.findById(id);
+        Optional <Noticia> respuesta= noticiaRepository.findById(id);
         if(respuesta.isPresent()){
             Noticia noticia=respuesta.get();
             noticia.setVisualizar(false);
-            noticiaRepositorio.save(noticia);
+            noticiaRepository.save(noticia);
         }
         
     }
     
     public Noticia getOne(Long id){
-       return noticiaRepositorio.getOne(id);
+       return noticiaRepository.getOne(id);
         
     }
     
