@@ -1,10 +1,12 @@
 package com.elobservador.noticiero.entidades;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import javax.persistence.*;
 
 @Data
 public class NoticiaDto {
@@ -16,10 +18,10 @@ public class NoticiaDto {
     @ManyToOne
     private Periodista periodista;
 
-    private Imagen imagen;
+    private MultipartFile archivo;
 
     @OneToMany(fetch = FetchType.EAGER)
-    private List<Imagen> albumImagenes;
+    private Set<Imagen> albumImagenes;
 
     private boolean estadoNoticia;
 

@@ -1,8 +1,10 @@
 package com.elobservador.noticiero.entidades;
 
 
-import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+
 
 @Entity
 public class Imagen {
@@ -18,6 +20,14 @@ public class Imagen {
     @Column(columnDefinition = "LONGBLOB")
     @Basic(fetch = FetchType.LAZY)
     private byte [] contenido;
+
+    @ManyToOne
+    @JoinColumn(name = "noticia_id")
+    private Noticia noticia;
+
+    @ManyToOne
+    @JoinColumn(name = "periodista_id")
+    private Periodista periodista;
 
     public Imagen(){
 
@@ -53,5 +63,21 @@ public class Imagen {
 
     public void setContenido(byte[] contenido) {
         this.contenido = contenido;
+    }
+
+    public Noticia getNoticia() {
+        return noticia;
+    }
+
+    public void setNoticia(Noticia noticia) {
+        this.noticia = noticia;
+    }
+
+    public Periodista getPeriodista() {
+        return periodista;
+    }
+
+    public void setPeriodista(Periodista periodista) {
+        this.periodista = periodista;
     }
 }

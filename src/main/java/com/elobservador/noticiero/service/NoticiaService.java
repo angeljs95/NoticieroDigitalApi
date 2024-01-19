@@ -3,77 +3,77 @@ package com.elobservador.noticiero.service;
 
 import com.elobservador.noticiero.entidades.Noticia;
 import com.elobservador.noticiero.excepcions.MiExceptions;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.elobservador.noticiero.repositorio.NoticiaRepository;
+import com.elobservador.noticiero.repositorio.NoticiaDaoRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import javax.transaction.Transactional;
 
 
 @Service
+@Transactional
 public class NoticiaService {
     
     @Autowired
-    NoticiaRepository noticiaRepository;
-    
-    @Transactional
-    public void crearNoticia(Long id, String titulo, String cuerpo ) throws MiExceptions {
+    NoticiaDaoRepository noticiaDaoRepository;
+
+    //---------------------Noticia Service sin usar Implements------------------
+
+    public void crearNoticia(String titulo, String cuerpo, String copete ) throws MiExceptions {
          
         Noticia noticia= new Noticia();
         
-        validar(id,titulo,cuerpo);
-        noticia.setId(id);
+        validar(titulo,cuerpo,copete);
+        noticia.setCopete(copete);
         noticia.setTitulo(titulo);
         noticia.setCuerpo(cuerpo);
-        noticia.setVisualizar(true);
+      //  noticia.setVisualizar(true);
        
-        noticiaRepository.save(noticia);
+        noticiaDaoRepository.save(noticia);
     }
     
     public List<Noticia> listarNoticias(){
         
         List<Noticia> noticias= new ArrayList();
         
-        noticias= noticiaRepository.findAll();
+        noticias= noticiaDaoRepository.findAll();
         return noticias;
     }
-    
-    public void modificarNoticia(String titulo, String cuerpo, Long id) throws MiExceptions {
-        validar(id, titulo,cuerpo);
-        Optional <Noticia> respuesta= noticiaRepository.findById(id);
+
+
+    public void modificarNoticia(String titulo, String cuerpo, String copete, long id ) throws MiExceptions {
+        validar( titulo,cuerpo, copete);
+        Optional <Noticia> respuesta= noticiaDaoRepository.findById(id);
         
         if(respuesta.isPresent()){
             Noticia noticia = respuesta.get();
             noticia.setTitulo(titulo);
             noticia.setCuerpo(cuerpo);
-            noticiaRepository.save(noticia);
+            noticiaDaoRepository.save(noticia);
         }
     }
     
     public void darBaja(Long id){
         
-        Optional <Noticia> respuesta= noticiaRepository.findById(id);
+        Optional <Noticia> respuesta= noticiaDaoRepository.findById(id);
         if(respuesta.isPresent()){
             Noticia noticia=respuesta.get();
-            noticia.setVisualizar(false);
-            noticiaRepository.save(noticia);
+           // noticia.setVisualizar(false);
+            noticiaDaoRepository.save(noticia);
         }
         
     }
     
     public Noticia getOne(Long id){
-       return noticiaRepository.getOne(id);
+       return noticiaDaoRepository.getOne(id);
         
     }
     
-    public void validar(Long id, String titulo, String cuerpo) throws MiExceptions {
+    public void validar(String titulo, String cuerpo, String copete) throws MiExceptions {
         
-        if( id==null){
-            throw new MiExceptions("El id no puede ser nulo");
-        }
+
         
         if(titulo.isEmpty()|| titulo == null){
             throw new MiExceptions("El titulo no puede estar vacio o nulo");
@@ -83,6 +83,11 @@ public class NoticiaService {
         if(cuerpo.isEmpty()|| cuerpo == null){
              throw new MiExceptions("El cuerpo tiene que tener algun contenido");
             
+        }
+
+        if(copete.isEmpty()|| cuerpo == null){
+            throw new MiExceptions("El copete tiene que tener algun contenido");
+
         }
         
     }

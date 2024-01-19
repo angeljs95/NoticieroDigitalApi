@@ -1,7 +1,7 @@
 package com.elobservador.noticiero.entidades;
 
 import com.elobservador.noticiero.enumerations.Role;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -12,6 +12,7 @@ public class Usuario {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(unique = true, nullable = false)
     protected String id;
 
     protected String name;
@@ -29,12 +30,26 @@ public class Usuario {
     protected boolean active;
 
     @OneToOne
-    protected Imagen photo;
+    protected Imagen imagen;
 
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
 
     public Usuario(){}
+
+    public Usuario(String id, String name, Integer document, Integer age, String email, String password, String nickName, String address, Role role, boolean active, Imagen imagen) {
+        this.id = id;
+        this.name = name;
+        this.document = document;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.address = address;
+        this.role = role;
+        this.active = active;
+        this.imagen = imagen;
+    }
 
     public String getId() {
         return id;
@@ -116,12 +131,12 @@ public class Usuario {
         this.active = active;
     }
 
-    public Imagen getPhoto() {
-        return photo;
+    public Imagen getImagen() {
+        return imagen;
     }
 
-    public void setPhoto(Imagen photo) {
-        this.photo = photo;
+    public void setImagen(Imagen imagen) {
+        this.imagen = imagen;
     }
 
     @Override
@@ -137,7 +152,7 @@ public class Usuario {
                 ", address='" + address + '\'' +
                 ", role=" + role +
                 ", active=" + active +
-                ", photo=" + photo +
+                ", photo=" + imagen +
                 '}';
     }
 }

@@ -1,20 +1,36 @@
 package com.elobservador.noticiero.service;
 
 import com.elobservador.noticiero.entidades.Imagen;
-import com.elobservador.noticiero.entidades.Periodista;
+import com.elobservador.noticiero.excepcions.MiExceptions;
+import com.elobservador.noticiero.repositorio.ImagenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import javax.transaction.Transactional;
 
-public interface ImagenService {
+@Service
+public class ImagenService {
 
-    Imagen createImagen(Imagen imagen);
+    @Autowired
+    ImagenRepository imagenRepository;
 
-    Imagen getImagen( String id);
-    void updateImagen(Imagen imagen);
+    @Transactional
+    public Imagen guardar(MultipartFile archivo) throws MiExceptions {
 
-    void deleteImagen( String id);
+        if (archivo != null) {
+            try {
+                Imagen imagen = new Imagen();
+                imagen.setMime(archivo.getContentType());
+                imagen.setNombre(archivo.getName());
+                imagen.setContenido(archivo.getBytes());
+                return imagenRepository.save(imagen);
+            } catch (Exception ex) {
+                System.err.println(ex.getMessage());
+            }
 
-    List<Imagen> listImagen();
-
+        }
+        return null;
+    }
 
 }

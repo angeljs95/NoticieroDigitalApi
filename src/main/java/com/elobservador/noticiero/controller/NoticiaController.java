@@ -1,6 +1,7 @@
 package com.elobservador.noticiero.controller;
 
 import com.elobservador.noticiero.entidades.Noticia;
+import com.elobservador.noticiero.entidades.NoticiaDto;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.service.NoticiaService;
 import java.util.List;
@@ -13,25 +14,29 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+//@Controller
+//@RequestMapping("/noticia")
 @Controller
-@RequestMapping("/noticia")
+@RequestMapping("/")
 public class NoticiaController {
-
+//----------------------Usando Controller---------------------------
     @Autowired
     private NoticiaService noticiaService;
 
     @GetMapping("/registrar")
-    public String registrar() {
+    public String registrar(ModelMap model) {
+        model.addAttribute("noticiaDto", new NoticiaDto());
 
-        return "noticias_crear.html";
+
+        return "crear.html";
     }
 
     @PostMapping("/registro")
-    public String registro( @RequestParam(required=false) Long id ,@RequestParam String titulo,
-            @RequestParam String cuerpo, ModelMap modelo) throws MiExceptions {
+    public String registro( @RequestParam String titulo,
+            @RequestParam String cuerpo, @RequestParam String copete, ModelMap modelo) throws MiExceptions {
 
         try {
-            noticiaService.crearNoticia(id,titulo, cuerpo);
+            noticiaService.crearNoticia(titulo, cuerpo, copete);
             modelo.put("exito", "La noticia se ha cargado Correctamente");
 
             return "index.html";
@@ -64,10 +69,10 @@ public class NoticiaController {
     }
 
     @PostMapping("/modificar/{id}")
-    public String modificar(@PathVariable Long id, String titulo, String cuerpo, RedirectAttributes redi , ModelMap modelo) throws MiExceptions {
+    public String modificar(@PathVariable Long id, String titulo, String cuerpo,String copete, RedirectAttributes redi , ModelMap modelo) throws MiExceptions {
 
         try {
-            noticiaService.modificarNoticia(titulo, cuerpo, id);
+            noticiaService.modificarNoticia(titulo, cuerpo, copete, id);
             redi.addFlashAttribute("exito", "La noticia se modifico correctamente");
             return "redirect:../lista";
         } catch (MiExceptions ex) {

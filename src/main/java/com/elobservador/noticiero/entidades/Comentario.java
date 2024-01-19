@@ -1,6 +1,9 @@
 package com.elobservador.noticiero.entidades;
 
-import jakarta.persistence.*;
+
+import org.aspectj.weaver.ast.Not;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name="Comentarios")
@@ -16,6 +19,10 @@ public class Comentario {
 
     @ManyToOne
     public Periodista periodista;
+
+    @ManyToOne
+    @JoinColumn(name = "noticia_id") // Asegúrate de especificar el nombre de la columna en la tabla Comentario
+    private Noticia noticia;
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
 
@@ -53,6 +60,14 @@ public class Comentario {
 
     public void setPeriodista(Periodista periodista) {
         this.periodista = periodista;
+    }
+
+    public Noticia getNoticia() {
+        return noticia;
+    }
+
+    public void setNoticia(Noticia noticia) {
+        this.noticia = noticia;
     }
 
     @Override

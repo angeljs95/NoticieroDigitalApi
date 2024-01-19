@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface NoticiaRepository extends JpaRepository < Noticia, Long> {
+public interface NoticiaDaoRepository extends JpaRepository < Noticia, Long> {
    
     
     

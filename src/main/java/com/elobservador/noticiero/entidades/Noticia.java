@@ -1,11 +1,12 @@
 
 package com.elobservador.noticiero.entidades;
 
-import jakarta.persistence.*;
-import jdk.jfr.Name;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.*;
+import java.awt.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 
@@ -25,18 +26,19 @@ public class Noticia implements Serializable {
     @ManyToOne
     private Periodista periodista;
 
+    @OneToOne
     private Imagen imagen;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Imagen> albumImagenes;
+    @OneToMany(mappedBy = "noticia", fetch = FetchType.EAGER)
+    private Set<Imagen> albumImagenes = new HashSet<>();
 
     private boolean estadoNoticia;
 
     @Temporal(TemporalType.DATE)
     private Date alta;
 
-    @OneToMany
-    private List<Comentario> comentarios;
+    @OneToMany(mappedBy = "noticia")
+    private List<Comentario> comentarios = new ArrayList<>();
 
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
@@ -93,14 +95,6 @@ public class Noticia implements Serializable {
         this.imagen = imagen;
     }
 
-    public List<Imagen> getAlbumImagenes() {
-        return albumImagenes;
-    }
-
-    public void setAlbumImagenes(List<Imagen> albumImagenes) {
-        this.albumImagenes = albumImagenes;
-    }
-
     public boolean isEstadoNoticia() {
         return estadoNoticia;
     }
@@ -123,6 +117,14 @@ public class Noticia implements Serializable {
 
     public void setComentarios(List<Comentario> comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public Set<Imagen> getAlbumImagenes() {
+        return albumImagenes;
+    }
+
+    public void setAlbumImagenes(Set<Imagen> albumImagenes) {
+        this.albumImagenes = albumImagenes;
     }
 
     @Override

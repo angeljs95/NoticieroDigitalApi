@@ -1,36 +1,31 @@
 package com.elobservador.noticiero.entidades;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "Periodistas")
+@PrimaryKeyJoinColumn(name = "id")
 public class Periodista extends Usuario {
 
-    private String nickName;
 
     private Integer matricula;
 
-    @OneToMany
-    private List<Imagen> imagenesPeriodista;
+    @OneToMany(mappedBy = "periodista", fetch = FetchType.LAZY)
+    private List<Imagen> imagenesPeriodista = new ArrayList<>();
 
-    @ManyToOne
+    @OneToMany
+    @Column(name="periodista_noticias")
     @JoinColumn(name = "noticia_id")
-    private Noticia noticia;
+    private List<Noticia> noticias;
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
 
     public Periodista(){}
 
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
 
     public Integer getMatricula() {
         return matricula;
@@ -48,11 +43,11 @@ public class Periodista extends Usuario {
         this.imagenesPeriodista = imagenesPeriodista;
     }
 
-    public Noticia getNoticia() {
-        return noticia;
+    public List<Noticia> getNoticias() {
+        return noticias;
     }
 
-    public void setNoticia(Noticia noticia) {
-        this.noticia = noticia;
+    public void setNoticias(List<Noticia> noticias) {
+        this.noticias = noticias;
     }
 }
