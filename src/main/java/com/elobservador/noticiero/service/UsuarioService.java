@@ -1,19 +1,33 @@
 package com.elobservador.noticiero.service;
 
 import com.elobservador.noticiero.entidades.Usuario;
+import com.elobservador.noticiero.repositorio.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UsuarioService {
+public class UsuarioService {
 
-    Usuario createUsuario(Usuario usuario);
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    Usuario getUsuario( String id);
-    void updateUsuario(Usuario usuario);
+    @Transactional
+    public void cambiarEstado(String id) {
+        Optional<Usuario> respuesta = usuarioRepository.findById(id);
+        if (respuesta.isPresent()) {
+            Usuario usuario = respuesta.get();
 
-    void deleteUsuario( String id);
+            if (usuario.isActive() ) {
+                usuario.setActive(false);
+            } else if (!usuario.isActive()) {
+                usuario.setActive(true);
+            }
+        }
+    }
 
-    List<Usuario> listUsuarios();
+
 
 
 

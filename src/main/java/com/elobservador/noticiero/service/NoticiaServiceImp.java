@@ -114,6 +114,8 @@ public class NoticiaServiceImp implements NoticiaServicee {
         }
     }
 
+    }
+
 
   /*  @Override
     public NoticiaDto createNoticia(NoticiaDto noticiaDto) {
@@ -129,6 +131,5 @@ public class NoticiaServiceImp implements NoticiaServicee {
         return noticiaDto;
     }*/
 
-}
 
 // direccion ip base de datos :    35.193.112.157

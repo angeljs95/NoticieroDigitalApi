@@ -1,9 +1,8 @@
 package com.elobservador.noticiero.entidades;
 
 
-import org.aspectj.weaver.ast.Not;
-
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="Comentarios")
@@ -15,9 +14,14 @@ public class Comentario {
 
     public String mensaje;
     @ManyToOne
-    public Usuario usuario;
+    @JoinColumn(name="lector_id")
+    public Lector lector;
+
+    @Temporal(TemporalType.DATE)
+    public Date fechaCreacion;
 
     @ManyToOne
+    @JoinColumn(name="periodista_id")
     public Periodista periodista;
 
     @ManyToOne
@@ -46,12 +50,12 @@ public class Comentario {
         this.mensaje = mensaje;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Lector getLector() {
+        return lector;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setLector(Lector lector) {
+        this.lector = lector;
     }
 
     public Periodista getPeriodista() {
@@ -70,12 +74,20 @@ public class Comentario {
         this.noticia = noticia;
     }
 
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
     @Override
     public String toString() {
         return "Comentario{" +
                 "id=" + id +
                 ", mensaje='" + mensaje + '\'' +
-                ", usuario=" + usuario +
+                ", usuario=" + lector +
                 ", periodista=" + periodista +
                 '}';
     }

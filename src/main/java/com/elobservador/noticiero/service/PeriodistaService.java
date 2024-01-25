@@ -44,8 +44,8 @@ public class PeriodistaService {
       if (respuesta.isPresent()){
         Periodista periodista= respuesta.get();
           actualizarEntidad(periodista,periodistaActualizado);
-          Periodista periodistaAct= periodistaRepository.save(periodista);
-          return  periodistaAct;
+          return periodistaRepository.save(periodista);
+          //return  periodistaAct;
 
       }
 //

@@ -4,6 +4,8 @@ import com.elobservador.noticiero.enumerations.Role;
 import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Usuarios")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -31,6 +33,7 @@ public class Usuario {
 
     @OneToOne
     protected Imagen imagen;
+
 
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
@@ -155,4 +158,8 @@ public class Usuario {
                 ", photo=" + imagen +
                 '}';
     }
+
+    private static final String PATRON_OWASP = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*"
+            + "@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$";
+
 }

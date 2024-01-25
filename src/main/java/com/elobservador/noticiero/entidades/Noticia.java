@@ -37,14 +37,44 @@ public class Noticia implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date alta;
 
-    @OneToMany(mappedBy = "noticia")
+    @OneToMany(mappedBy = "noticia", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> comentarios = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "likesNotices")
+    private List<Lector> lectorLikes = new ArrayList<>();
+
+    private  int cantidadDeMegusta = 0;
+
 
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
 
     public Noticia(){
 
+    }
+
+    public List<Lector> getLectorLikes() {
+        return lectorLikes;
+    }
+
+    public void setLectorLikes(List<Lector> lectorLikes) {
+        this.lectorLikes = lectorLikes;
+    }
+
+    public int getCantidadDeMegusta() {
+        return cantidadDeMegusta;
+    }
+
+    public void setCantidadDeMegusta(int cantidadDeMegusta) {
+        this.cantidadDeMegusta = cantidadDeMegusta;
+    }
+
+    public void darLike ( ) {
+        cantidadDeMegusta++ ;
+    }
+
+    public void sacarLike() {
+        cantidadDeMegusta --;
     }
 
     public Long getId() {

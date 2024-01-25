@@ -17,6 +17,9 @@ public class Periodista extends Usuario {
     @OneToMany(mappedBy = "periodista", fetch = FetchType.LAZY)
     private List<Imagen> imagenesPeriodista = new ArrayList<>();
 
+    @OneToMany (mappedBy="periodista", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentariosPeriodista= new ArrayList<>();
+
     @OneToMany
     @Column(name="periodista_noticias")
     @JoinColumn(name = "noticia_id")
@@ -49,5 +52,13 @@ public class Periodista extends Usuario {
 
     public void setNoticias(List<Noticia> noticias) {
         this.noticias = noticias;
+    }
+
+    public List<Comentario> getComentariosPeriodista() {
+        return comentariosPeriodista;
+    }
+
+    public void setComentariosPeriodista(List<Comentario> comentariosPeriodista) {
+        this.comentariosPeriodista = comentariosPeriodista;
     }
 }
