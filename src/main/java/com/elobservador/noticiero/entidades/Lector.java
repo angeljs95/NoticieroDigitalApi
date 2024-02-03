@@ -2,6 +2,7 @@ package com.elobservador.noticiero.entidades;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class Lector extends Usuario{
     @OneToMany
     @Column(name="noticias_favoritas")
     @JoinColumn(name = "noticia_id")
-    Set<Noticia> noticiasFavoritas;
+   private Set<Noticia> noticiasFavoritas= new HashSet<>();
 
     public Lector(){}
 
@@ -52,6 +53,7 @@ public class Lector extends Usuario{
     public void setNoticiasFavoritas(Set<Noticia> noticiasFavoritas) {
         this.noticiasFavoritas = noticiasFavoritas;
     }
+
 
     @Override
     public String toString() {

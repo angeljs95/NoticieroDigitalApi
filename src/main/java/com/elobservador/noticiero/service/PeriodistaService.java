@@ -1,5 +1,7 @@
 package com.elobservador.noticiero.service;
 
+import com.elobservador.noticiero.dtos.PeriodistaDto;
+import com.elobservador.noticiero.entidades.Imagen;
 import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.enumerations.Role;
 import com.elobservador.noticiero.excepcions.MiExceptions;
@@ -14,60 +16,110 @@ import java.beans.PropertyDescriptor;
 import java.util.*;
 
 @Service
+@Transactional
 public class PeriodistaService {
 
     @Autowired
     PeriodistaRepository periodistaRepository;
+    @Autowired
+    ImagenService imagenService;
 
-    @Transactional
-    public Periodista registrar(Periodista periodista) throws  MiExceptions{
+
+    public Periodista registrar(PeriodistaDto periodista) throws  MiExceptions{
         validar(periodista);
-        Periodista periodista1= new Periodista();
-        periodista1.setName(periodista.getName());
-        periodista1.setEmail(periodista.getEmail());
-        periodista1.setPassword(periodista.getPassword());
-        periodista1.setNickName(periodista.getNickName());
-        periodista1.setDocument(periodista.getDocument());
-        periodista1.setAge(periodista.getAge());
-        periodista1.setAddress(periodista.getAddress());
-       periodista1.setRole(Role.PERIODISTA);
-        periodista1.setActive(true);
-        periodista1.setImagen(periodista.getImagen());
 
-        return periodistaRepository.save(periodista1);
+        Periodista newPeriodista= new Periodista();
+        newPeriodista.setName(periodista.getName());
+        newPeriodista.setEmail(periodista.getEmail());
+        newPeriodista.setPassword(periodista.getPassword());
+        newPeriodista.setNickName(periodista.getNickName());
+        newPeriodista.setDocument(periodista.getDocument());
+        newPeriodista.setAge(periodista.getAge());
+        newPeriodista.setAddress(periodista.getAddress());
+        newPeriodista.setRole(Role.PERIODISTA);
+        newPeriodista.setActive(true);
+        newPeriodista.setMatricula(periodista.getMatricula());
+        Imagen imagen= imagenService.guardar(periodista.getArchivo());
+
+        if (imagen!= null){
+            newPeriodista.setImagen(imagen);
+        }
+
+        return periodistaRepository.save(newPeriodista);
     }
 
-    public Periodista updatePeriodista(Periodista periodistaActualizado) throws MiExceptions {
-        // validar(periodistaActualizado);
+    // hay que buscar los atributos que se puedan modificar de un periodista y asi emprolijar mas el codigo
+    public Periodista updatePeriodista(PeriodistaDto periodista) throws MiExceptions {
+        validar(periodista);
 
-      Optional<Periodista> respuesta= periodistaRepository.findById(periodistaActualizado.getId());
-      if (respuesta.isPresent()){
-        Periodista periodista= respuesta.get();
-          actualizarEntidad(periodista,periodistaActualizado);
-          return periodistaRepository.save(periodista);
-          //return  periodistaAct;
-
-      }
-//
-//        periodista1.setName(periodista.getName());
-//        periodista1.setEmail(periodista.getEmail());
-//        periodista1.setPassword(periodista.getPassword());
-//        periodista1.setNickName(periodista.getNickName());
-//        periodista1.setDocument(periodista.getDocument());
-//        periodista1.setAge(periodista.getAge());
-//        periodista1.setAddress(periodista.getAddress());
-//        if(periodista.getRole()!=null ){
-//            periodista1.setRole(periodista.getRole());
-//        }
-//        if(periodista.isActive()!=true){
-//            periodista1.setActive(periodista.isActive());
-//        }
-//
-//        periodista1.setImagen(periodista.getImagen());
-    return null;
+        Optional<Periodista> respuesta= periodistaRepository.findById(periodista.getId());
+        if (respuesta.isPresent()){
+            Periodista updatePeriodista= respuesta.get();
+            actualizarEntidad(updatePeriodista, periodista);
+            return periodistaRepository.save(updatePeriodista);
+        }
+     return  null;
     }
 
-    private void actualizarEntidad(Periodista periodista, Periodista periodistaActualizado){
+    public List<Periodista> listAll(){
+
+        return periodistaRepository.findAll();
+    }
+
+    public Periodista getPeriodista(String id){
+
+        return periodistaRepository.findById(id).orElse(null);
+    }
+
+    public void bajaPeriodista(String id){
+        Optional<Periodista> respuesta= periodistaRepository.findById(id);
+        if (respuesta.isPresent()){
+            Periodista periodista=respuesta.get();
+            periodista.setActive(false);
+            periodistaRepository.save(periodista);
+        }
+    }
+
+    public void deletePeriodista(String id) throws MiExceptions{
+
+        Periodista periodista = getPeriodista(id);
+        if (periodista != null) {
+            periodistaRepository.deleteById(id);
+        }
+        throw new MiExceptions("No se ha encontrado el usuario");
+    }
+
+    private void validar(PeriodistaDto periodista)throws MiExceptions {
+        if(periodista.getName()== null || periodista.getName().isEmpty()){
+            throw new MiExceptions("El nombre no puede estar vacio o ser nulo");
+        }
+        if(periodista.getEmail()== null ||periodista.getEmail().isEmpty()){
+            throw new MiExceptions("El email no puede ser vacio o nulo");
+        }
+       if(periodista.getNickName()==null || periodista.getNickName().isEmpty()){
+            throw new MiExceptions("Tiene que asignar un nickName valido");
+        }
+        if(periodista.getPassword().length()< 8 ){
+            throw new MiExceptions("El password debe tener al menos 8 caracteres");
+        }
+        if(periodista.getMatricula()== null){
+            throw new MiExceptions("Debe ingresar su numero de matricula");
+        }
+        if(periodista.getAddress()== null || periodista.getAddress().isEmpty()){
+            throw new MiExceptions("Debe seleccionar una direccion");
+        }
+
+        if(periodista.getDocument()== null){
+            throw new MiExceptions("El documento no puede ser nulo");
+        }
+
+        if(periodista.getAge()==null || periodista.getAge()<18 ){
+            throw new MiExceptions("Debe ser mayor a 18años y no debe estar vacio");
+        }
+    }
+
+    // metodo de actualizacion de la entidad periodista
+    private void actualizarEntidad(Periodista periodista, PeriodistaDto periodistaActualizado){
 
         BeanUtils.copyProperties(periodistaActualizado,periodista, getNullPropertyNames(periodistaActualizado));
 
@@ -86,68 +138,5 @@ public class PeriodistaService {
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
     }
-   public List<Periodista> listAll(){
-
-        return periodistaRepository.findAll();
-    }
-
-     public Periodista getPeriodista(String id){
-
-        return periodistaRepository.findById(id).orElse(null);
-
-    }
-
-     public void bajaPeriodista(String id){
-        Optional<Periodista> respuesta= periodistaRepository.findById(id);
-        if (respuesta.isPresent()){
-            Periodista periodista=respuesta.get();
-            periodista.setActive(false);
-            periodistaRepository.save(periodista);
-        }
-    }
-
-   public void deletePeriodista(String id) throws MiExceptions{
-
-       Periodista periodista = getPeriodista(id);
-       if (periodista != null) {
-
-           periodistaRepository.deleteById(id);
-       }
-       throw new MiExceptions("No se ha encontrado el usuario");
-   }
-
-
-    private void validar(Periodista periodista)throws MiExceptions {
-        if(periodista.getName()== null || periodista.getName().isEmpty()){
-            throw new MiExceptions("El nombre no puede estar vacio o ser nulo");
-        }
-        if(periodista.getEmail()== null ||periodista.getEmail().isEmpty()){
-            throw new MiExceptions("El email no puede ser vacio o nulo");
-        }
-//        if(periodista.getNickName().isEmpty() || periodista.getNickName()==null){
-//            throw new MiExceptions("Tiene que asignar un nickName valido");
-//        }
-        if(periodista.getPassword().length()< 8 ){
-            throw new MiExceptions("El password debe tener al menos 8 caracteres");
-        }
-        if(periodista.getMatricula()== null){
-            throw new MiExceptions("Debe ingresar su numero de matricula");
-        }
-        if(periodista.getAddress()== null || periodista.getAddress().isEmpty()){
-            throw new MiExceptions("Debe seleccionar una direccion");
-        }
-
-        if(periodista.getDocument()== null){
-            throw new MiExceptions("El documento no puede ser nulo");
-        }
-
-        if(periodista.getAge()<18 || periodista.getAge()==null){
-            throw new MiExceptions("Debe ser mayor a 18años y no debe estar vacio");
-        }
-    }
-
-
-
-
 
 }

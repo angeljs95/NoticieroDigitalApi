@@ -1,4 +1,5 @@
 package com.elobservador.noticiero.controller;
+import com.elobservador.noticiero.dtos.PeriodistaDto;
 import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.RuntimeMiExceptions;
 import com.elobservador.noticiero.excepcions.MiExceptions;
@@ -21,78 +22,59 @@ public class PeriodistaRestController {
     @Autowired
     private PeriodistaService periodistaService;
 
-    @InitBinder
-    //Método privado para evitar espacios en blanco
-    private void stringBinder(WebDataBinder binder) {
-        StringTrimmerEditor blankTrimmer =
-                new StringTrimmerEditor(true);
-        binder.registerCustomEditor(
-                String.class, blankTrimmer);
-    }
 
-    @PostMapping("/registrado")
-    public Periodista crearPeriodista(@RequestBody Periodista periodista, ModelMap model) throws MiExceptions {
+    @PostMapping("/register")
+    public ResponseEntity<Periodista> registerPeriodista(@RequestBody PeriodistaDto periodista, ModelMap model) throws MiExceptions {
         try {
-            // return String.valueOf(periodista);
-            System.out.println("entro al try");
-            Periodista periodista1= periodistaService.registrar(periodista);
-            model.put("exito","El registro ha sido exitoso");
-            return periodista1;
+            Periodista newPeriodista= periodistaService.registrar(periodista);
+            return ResponseEntity.ok(newPeriodista);
         } catch (MiExceptions ex) {
-            System.out.println("no entro");
-            model.put("error", ex.getMessage());
             throw new RuntimeMiExceptions(ex.getMessage());
         }
-
-    }
-    @GetMapping(path = "/{id}")
-    public Periodista obtenerPeriodista(@PathVariable String id, ModelMap model){
-
-        Periodista periodista= periodistaService.getPeriodista(id);
-                if( periodista!=null) {
-                    return periodista;
-                }
-        throw new RuntimeMiExceptions("La entidad con el ID " + id + " no se encontró.");
-    }
-
-    @GetMapping("/getAll")
-    public List<Periodista> obtenerPeriodistas( ModelMap model){
-
-            List<Periodista> periodistas = periodistaService.listAll();
-        model.put("periodistaList",periodistas);
-
-
-        return periodistas;
-
     }
 
     @PutMapping("/update/{id}")
-    public Periodista updatePeriodista(@RequestBody Periodista periodista, @PathVariable String id,
-                                    ModelMap model) throws MiExceptions{
+    public ResponseEntity<Periodista> updatePeriodista (@RequestBody PeriodistaDto periodista, @PathVariable String id,
+                                                        ModelMap model) throws MiExceptions{
 
         try {
             if (periodista != null) {
-            periodista.setId(id);
-            Periodista respuesta= periodistaService.updatePeriodista(periodista);
-            model.put("exito","El usuario: "+ periodista.getName()+" se ha actualizado correctamente");
-            return respuesta;}
+                periodista.setId(id);
+            }
+            return ResponseEntity.ok(periodistaService.updatePeriodista(periodista));
         } catch (MiExceptions ex){
-            model.put("error", ex.getMessage());
             throw new RuntimeMiExceptions(ex.getMessage());
         }
-        return null;
     }
 
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Periodista> getPeriodista(@PathVariable String id, ModelMap model){
+
+        Periodista periodista= periodistaService.getPeriodista(id);
+                if( periodista==null) {
+                    return ResponseEntity.noContent().build();
+                }
+                    return ResponseEntity.ok(periodista);
+        //throw new RuntimeMiExceptions("La entidad con el ID " + id + " no se encontró.");
+    }
+
+    @GetMapping("/listAll")
+    public ResponseEntity<List<Periodista>> listPeriodistas( ModelMap model){
+
+            List<Periodista> listperiodistas = periodistaService.listAll();
+    if(listperiodistas.isEmpty()){
+        return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(listperiodistas);
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Boolean> deletePeriodistaa(@PathVariable String id, ModelMap model) throws MiExceptions {
         try{
            periodistaService.deletePeriodista(id);
-           model.put("exito","Se ha eliminado correctamente");
-           String respuesta= "Se ha eliminado corretamente";
            return ResponseEntity.ok(true);
     } catch (MiExceptions ex){
-           model.put("error", "no se ha encontrardo al periodista"); // ex.getMessage());
             throw new RuntimeMiExceptions(" No se ha encontrado al periodista");
         }
     }
@@ -102,5 +84,14 @@ public class PeriodistaRestController {
     public ResponseEntity<String> ExcepcionesRest(RuntimeMiExceptions ex) {
         String mensajeError = ex.getMessage();
         return new ResponseEntity<>(mensajeError, HttpStatus.NOT_FOUND);
+    }
+
+    @InitBinder
+    //Método privado para evitar espacios en blanco
+    private void stringBinder(WebDataBinder binder) {
+        StringTrimmerEditor blankTrimmer =
+                new StringTrimmerEditor(true);
+        binder.registerCustomEditor(
+                String.class, blankTrimmer);
     }
 }

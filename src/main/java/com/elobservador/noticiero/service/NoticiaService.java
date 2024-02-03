@@ -1,12 +1,16 @@
 
 package com.elobservador.noticiero.service;
 
+import com.elobservador.noticiero.entidades.Imagen;
 import com.elobservador.noticiero.entidades.Noticia;
+import com.elobservador.noticiero.dtos.NoticiaDto;
+import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.elobservador.noticiero.repositorio.NoticiaDaoRepository;
-import java.util.ArrayList;
+import com.elobservador.noticiero.repositorio.NoticiaRepository;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -17,79 +21,105 @@ import javax.transaction.Transactional;
 public class NoticiaService {
     
     @Autowired
-    NoticiaDaoRepository noticiaDaoRepository;
+    NoticiaRepository noticiaRepository;
 
-    //---------------------Noticia Service sin usar Implements------------------
+    @Autowired
+    PeriodistaService periodistaService;
 
-    public void crearNoticia(String titulo, String cuerpo, String copete ) throws MiExceptions {
-         
-        Noticia noticia= new Noticia();
-        
-        validar(titulo,cuerpo,copete);
-        noticia.setCopete(copete);
-        noticia.setTitulo(titulo);
-        noticia.setCuerpo(cuerpo);
-      //  noticia.setVisualizar(true);
-       
-        noticiaDaoRepository.save(noticia);
-    }
-    
-    public List<Noticia> listarNoticias(){
-        
-        List<Noticia> noticias= new ArrayList();
-        
-        noticias= noticiaDaoRepository.findAll();
-        return noticias;
-    }
+    @Autowired
+    ImagenService imagenService;
 
+    public Noticia saveNoticia(NoticiaDto noticia) throws MiExceptions {
 
-    public void modificarNoticia(String titulo, String cuerpo, String copete, long id ) throws MiExceptions {
-        validar( titulo,cuerpo, copete);
-        Optional <Noticia> respuesta= noticiaDaoRepository.findById(id);
-        
-        if(respuesta.isPresent()){
-            Noticia noticia = respuesta.get();
-            noticia.setTitulo(titulo);
-            noticia.setCuerpo(cuerpo);
-            noticiaDaoRepository.save(noticia);
+        validar(noticia);
+
+        if(noticia.getPeriodistaId()== null) {
+            return null;
         }
+        Noticia noticiaNew= new Noticia();
+        //Principales Atributos
+        noticiaNew.setTitulo(noticia.getTitulo());
+        noticiaNew.setCopete(noticia.getCopete());
+        noticiaNew.setCuerpo(noticia.getCuerpo());
+        noticiaNew.setEstadoNoticia(true);
+        noticiaNew.setAlta(new Date());
+        // atributos de relaciones
+        Periodista periodista= periodistaService.getPeriodista(noticia.getPeriodistaId());
+        Imagen imagen= imagenService.guardar(noticia.getArchivo());
+        noticiaNew.setPeriodista(periodista);
+
+        if (imagen != null) {
+            noticiaNew.setImagen(imagen);
+        }
+       
+       return noticiaRepository.save(noticiaNew);
     }
     
-    public void darBaja(Long id){
+    public List<Noticia> getAllNews(){
+
+        return noticiaRepository.findAll();
+    }
+
+    public Noticia updateNoticia(NoticiaDto noticia ) throws MiExceptions {
+        validar(noticia);
+
+        if(noticia.getId()==null){
+           return null;
+        }
+        Optional <Noticia> respuesta= noticiaRepository.findById(noticia.getId());
+        if(respuesta.isPresent()){
+            Noticia noticiaActualizacion= respuesta.get();
+            noticiaActualizacion.setTitulo(noticia.getTitulo());
+            noticiaActualizacion.setCuerpo(noticia.getCuerpo());
+            noticiaActualizacion.setCopete(noticia.getCopete());
+            return noticiaRepository.save(noticiaActualizacion);
+        }
+        throw new MiExceptions("la noticia no pudo ser encontrada");
+    }
+    
+    public void darBaja(Long idNoticia){
         
-        Optional <Noticia> respuesta= noticiaDaoRepository.findById(id);
+        Optional <Noticia> respuesta= noticiaRepository.findById(idNoticia);
         if(respuesta.isPresent()){
             Noticia noticia=respuesta.get();
-           // noticia.setVisualizar(false);
-            noticiaDaoRepository.save(noticia);
+          noticia.setEstadoNoticia(false);
+            noticiaRepository.save(noticia);
         }
         
     }
-    
-    public Noticia getOne(Long id){
-       return noticiaDaoRepository.getOne(id);
-        
+
+    public void deleteNoticia(long id) throws MiExceptions{
+        Optional<Noticia> respuesta= noticiaRepository.findById(id);
+        if (respuesta.isPresent()){
+            Noticia noticia= respuesta.get();
+            noticiaRepository.delete(noticia);
+        }else{
+            throw new MiExceptions("La noticia no pudo encontrarse");
+        }
     }
     
-    public void validar(String titulo, String cuerpo, String copete) throws MiExceptions {
-        
+    public Noticia getNew(Long idNotice){
 
-        
-        if(titulo.isEmpty()|| titulo == null){
-            throw new MiExceptions("El titulo no puede estar vacio o nulo");
-            
-            
-        }
-        if(cuerpo.isEmpty()|| cuerpo == null){
-             throw new MiExceptions("El cuerpo tiene que tener algun contenido");
-            
-        }
-
-        if(copete.isEmpty()|| cuerpo == null){
-            throw new MiExceptions("El copete tiene que tener algun contenido");
-
-        }
-        
+        return noticiaRepository.findById(idNotice).orElse(null);
     }
-    
+
+    public List<Noticia> newsByPeriodista( String idPeriodista){
+
+        return noticiaRepository.findByPeriodistaId(idPeriodista);
+    }
+
+    private void validar(NoticiaDto noticia) throws MiExceptions{
+        if (noticia.getTitulo()== null || noticia.getTitulo().isEmpty()){
+            throw new MiExceptions("El titulo no puede estar en blanco o ser nulo ");
+        }
+        if (noticia.getCopete()== null || noticia.getCopete().isEmpty()){
+            throw new MiExceptions("Debe agregar una reseña para la noticia");
+        }
+        if (noticia.getCuerpo()== null || noticia.getCuerpo().isEmpty()){
+            throw new MiExceptions("El cuerpo de la noticia no puede estar en blanco o ser nulo ");
+        }
+    }
+
 }
+
+
