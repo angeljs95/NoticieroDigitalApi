@@ -13,7 +13,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-
 import java.util.List;
 
 @RestController
@@ -31,7 +30,7 @@ public class NoticiaRestController {
   @PostMapping(value = "/created")
     public ResponseEntity<Noticia> saveNew(@RequestBody NoticiaDto noticiadto) throws MiExceptions {
         try {
-
+            System.out.println("asf");
             Noticia noticiaNew = noticiaService.saveNoticia(noticiadto);
             return ResponseEntity.ok(noticiaNew);
 
