@@ -1,19 +1,18 @@
 
 package com.elobservador.noticiero.service;
 
-import com.elobservador.noticiero.entidades.Imagen;
-import com.elobservador.noticiero.entidades.Noticia;
+import com.elobservador.noticiero.entidades.*;
 import com.elobservador.noticiero.dtos.NoticiaDto;
-import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.elobservador.noticiero.repositorio.NoticiaRepository;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
+
 
 
 @Service
@@ -28,6 +27,8 @@ public class NoticiaService {
 
     @Autowired
     ImagenService imagenService;
+    @Autowired
+    LectorService lectorService;
 
     public Noticia saveNoticia(NoticiaDto noticia) throws MiExceptions {
 
@@ -51,7 +52,8 @@ public class NoticiaService {
         if (imagen != null) {
             noticiaNew.setImagen(imagen);
         }
-       
+        periodista.getNoticias().add(noticiaNew);
+        periodistaService.save(periodista);
        return noticiaRepository.save(noticiaNew);
     }
     
@@ -107,6 +109,30 @@ public class NoticiaService {
 
         return noticiaRepository.findByPeriodistaId(idPeriodista);
     }
+
+    public Noticia comentarNoticia(Comentario comentario) {
+        if (comentario != null) {
+
+            Noticia noticia = getNew(comentario.getNoticia().getId());
+            noticia.getComentarios().add(comentario);
+            lectorService.addComentario(comentario);
+            return noticiaRepository.save(noticia);
+        }
+        return null;
+    }
+
+    public Noticia replyComentario(Comentario comentario) {
+
+        if (comentario != null) {
+            Noticia noticia = getNew(comentario.getNoticia().getId());
+            noticia.getComentarios().add(comentario);
+            periodistaService.replyComentario(comentario);
+            return noticiaRepository.save(noticia);
+        }
+        return null;
+    }
+
+
 
     private void validar(NoticiaDto noticia) throws MiExceptions{
         if (noticia.getTitulo()== null || noticia.getTitulo().isEmpty()){

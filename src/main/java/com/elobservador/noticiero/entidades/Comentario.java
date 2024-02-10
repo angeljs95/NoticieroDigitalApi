@@ -1,8 +1,11 @@
 package com.elobservador.noticiero.entidades;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name="Comentarios")
@@ -13,20 +16,22 @@ public class Comentario {
     long id;
 
     public String mensaje;
-    @ManyToOne
-    @JoinColumn(name="lector_id")
-    public Lector lector;
 
     @Temporal(TemporalType.DATE)
     public Date fechaCreacion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="lector_id")
+    public Lector lector;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="periodista_id")
     public Periodista periodista;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "noticia_id") // Asegúrate de especificar el nombre de la columna en la tabla Comentario
     private Noticia noticia;
+
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
 
@@ -81,6 +86,7 @@ public class Comentario {
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
 
     @Override
     public String toString() {

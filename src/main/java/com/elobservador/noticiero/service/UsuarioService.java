@@ -3,15 +3,16 @@ package com.elobservador.noticiero.service;
 import com.elobservador.noticiero.entidades.Usuario;
 import com.elobservador.noticiero.repositorio.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    UsuarioRepository usuarioRepository;
 
     @Transactional
     public void cambiarEstado(String id) {
@@ -26,10 +27,5 @@ public class UsuarioService {
             }
         }
     }
-
-
-
-
-
 
 }

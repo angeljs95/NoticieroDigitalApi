@@ -1,6 +1,7 @@
 
 package com.elobservador.noticiero.entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -37,7 +38,8 @@ public class Noticia implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date alta;
 
-    @OneToMany(mappedBy = "noticia", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonBackReference
+    @OneToMany(mappedBy = "noticia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comentario> comentarios = new ArrayList<>();
 
     @ManyToMany(mappedBy = "likesNotices")

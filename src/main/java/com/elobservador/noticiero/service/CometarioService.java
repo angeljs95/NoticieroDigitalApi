@@ -1,12 +1,16 @@
 package com.elobservador.noticiero.service;
 
+import com.elobservador.noticiero.dtos.ComentarioDto;
 import com.elobservador.noticiero.entidades.Comentario;
+import com.elobservador.noticiero.entidades.Lector;
+import com.elobservador.noticiero.entidades.Noticia;
+import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.repositorio.ComentarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,25 +19,28 @@ import java.util.Optional;
 public class CometarioService {
 
     @Autowired
-    private ComentarioRepository comentarioRepository;
+    ComentarioRepository comentarioRepository;
+    @Autowired
+    NoticiaService noticiaService;
+    @Autowired
+    LectorService lectorService;
 
     @Transactional
-    public Comentario crearComentario (Comentario comentario){
+    public Comentario crearComentario(ComentarioDto comentario) {
 
         if (comentario!= null) {
 
-            //Comentario comentario1= comentarioRepository.findById(comentario.getId());
-            Comentario comentario1 = new Comentario();
-            comentario1.setMensaje(comentario.getMensaje());
-            comentario1.setNoticia(comentario.getNoticia());
-            comentario1.setFechaCreacion(new Date());
+            Comentario newComentario = new Comentario();
+            Noticia noticia = noticiaService.getNew(comentario.getNoticiaId());
+            Lector lector = lectorService.getLector(comentario.getLectorId());
+            Periodista periodista = noticia.getPeriodista();
 
-            if(comentario.getPeriodista()!= null) {
-                comentario1.setPeriodista(comentario.getPeriodista());
-            } else {
-                comentario1.setLector(comentario.getLector());
-            }
-           return comentarioRepository.save(comentario);
+            newComentario.setMensaje(comentario.getMensaje());
+            newComentario.setFechaCreacion(new Date());
+            newComentario.setNoticia(noticia);
+            newComentario.setLector(lector);
+            newComentario.setPeriodista(periodista);
+            return comentarioRepository.save(newComentario);
         }
         return null;
         }
@@ -50,12 +57,12 @@ public class CometarioService {
             }
         }
 
-        public Comentario getOne (Long id){
-        return comentarioRepository.getOne(id);
+    public Comentario getComentario(Long id) {
+        return comentarioRepository.findById(id).orElse(null);
 
         }
 
-        @Transactional(readOnly = true)
+    @Transactional
     public List<Comentario> getAll (){
             List<Comentario> comentarios= comentarioRepository.findAll();
         return  comentarios;
@@ -63,8 +70,7 @@ public class CometarioService {
         }
 
 
+}
 
-
-    }
 
 

@@ -1,6 +1,8 @@
 package com.elobservador.noticiero.entidades;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 import java.util.ArrayList;
@@ -17,18 +19,25 @@ public class Periodista extends Usuario {
     @OneToMany(mappedBy = "periodista", fetch = FetchType.LAZY)
     private List<Imagen> imagenesPeriodista = new ArrayList<>();
 
-    @OneToMany (mappedBy="periodista", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comentario> comentariosPeriodista= new ArrayList<>();
+    //@JsonBackReference
+    @OneToMany(mappedBy = "periodista", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comentario> comentarios = new ArrayList<>();
 
     @OneToMany
-    @Column(name="periodista_noticias")
     @JoinColumn(name = "noticia_id")
-    private List<Noticia> noticias;
+    private List<Noticia> noticias = new ArrayList<>();
 
     //-------------------------Empiezan constructores, getters and setters ---------------------
 
     public Periodista(){}
 
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
 
     public Integer getMatricula() {
         return matricula;
@@ -46,6 +55,7 @@ public class Periodista extends Usuario {
         this.imagenesPeriodista = imagenesPeriodista;
     }
 
+
     public List<Noticia> getNoticias() {
         return noticias;
     }
@@ -54,11 +64,4 @@ public class Periodista extends Usuario {
         this.noticias = noticias;
     }
 
-    public List<Comentario> getComentariosPeriodista() {
-        return comentariosPeriodista;
-    }
-
-    public void setComentariosPeriodista(List<Comentario> comentariosPeriodista) {
-        this.comentariosPeriodista = comentariosPeriodista;
-    }
 }

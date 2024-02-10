@@ -2,6 +2,7 @@
 package com.elobservador.noticiero.repositorio;
 
 import com.elobservador.noticiero.entidades.Noticia;
+import com.elobservador.noticiero.entidades.Periodista;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,8 @@ import java.util.List;
 public interface NoticiaRepository extends JpaRepository < Noticia, Long> {
 
     List<Noticia> findByPeriodistaId(String id);
+
+    Noticia findByIdAndPeriodistaId(Long Id, String idPeriodista);
    
     
     

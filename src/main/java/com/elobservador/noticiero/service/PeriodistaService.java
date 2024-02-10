@@ -1,7 +1,9 @@
 package com.elobservador.noticiero.service;
 
 import com.elobservador.noticiero.dtos.PeriodistaDto;
+import com.elobservador.noticiero.entidades.Comentario;
 import com.elobservador.noticiero.entidades.Imagen;
+import com.elobservador.noticiero.entidades.Noticia;
 import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.enumerations.Role;
 import com.elobservador.noticiero.excepcions.MiExceptions;
@@ -11,6 +13,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -23,7 +26,6 @@ public class PeriodistaService {
     PeriodistaRepository periodistaRepository;
     @Autowired
     ImagenService imagenService;
-
 
     public Periodista registrar(PeriodistaDto periodista) throws  MiExceptions{
         validar(periodista);
@@ -87,6 +89,21 @@ public class PeriodistaService {
             periodistaRepository.deleteById(id);
         }
         throw new MiExceptions("No se ha encontrado el usuario");
+    }
+
+    public void replyComentario(Comentario comentario) {
+
+        Optional<Periodista> respuesta = Optional.ofNullable(periodistaRepository.findById(comentario.getPeriodista().getId()).orElse(null));
+        if (respuesta.isPresent()) {
+            Periodista periodista = respuesta.get();
+            periodista.getComentarios().add(comentario);
+            periodistaRepository.save(periodista);
+        }
+    }
+
+    public void save(Periodista periodista) {
+        periodistaRepository.save(periodista);
+
     }
 
     private void validar(PeriodistaDto periodista)throws MiExceptions {

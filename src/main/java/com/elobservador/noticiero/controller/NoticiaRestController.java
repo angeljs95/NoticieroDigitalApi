@@ -1,11 +1,13 @@
 package com.elobservador.noticiero.controller;
 
+import com.elobservador.noticiero.dtos.ComentarioDto;
 import com.elobservador.noticiero.dtos.NoticiaDto;
+import com.elobservador.noticiero.entidades.Comentario;
 import com.elobservador.noticiero.entidades.Noticia;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.excepcions.RuntimeMiExceptions;
+import com.elobservador.noticiero.service.CometarioService;
 import com.elobservador.noticiero.service.NoticiaService;
-import com.elobservador.noticiero.service.PeriodistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +26,12 @@ public class NoticiaRestController {
     private NoticiaService noticiaService;
 
     @Autowired
-    private PeriodistaService periodistaService;
+    private CometarioService cometarioService;
 
 
   @PostMapping(value = "/created")
     public ResponseEntity<Noticia> saveNew(@RequestBody NoticiaDto noticiadto) throws MiExceptions {
         try {
-            System.out.println("asf");
             Noticia noticiaNew = noticiaService.saveNoticia(noticiadto);
             return ResponseEntity.ok(noticiaNew);
 
@@ -92,6 +93,26 @@ public class NoticiaRestController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(newsByPeriodistaId);
+    }
+
+    @PostMapping("/newComent/{id}")
+    public ResponseEntity<Noticia> comentNews(@PathVariable("id") String lectorId, @RequestBody ComentarioDto comentario) {
+
+        comentario.setLectorId(lectorId);
+        Comentario newComentario = cometarioService.crearComentario(comentario);
+        Noticia noticia = noticiaService.comentarNoticia(newComentario);
+        System.out.println(noticia.getTitulo());
+        return ResponseEntity.ok(noticia);
+    }
+
+    @PostMapping("/replyComent/{id}")
+    public ResponseEntity<Noticia> replyComentario(@PathVariable("id") String idPeriodista, @RequestBody ComentarioDto comentarioDto) {
+
+        comentarioDto.setLectorId(idPeriodista);
+        Comentario newComentario = cometarioService.crearComentario(comentarioDto);
+        Noticia noticia = noticiaService.replyComentario(newComentario);
+        return ResponseEntity.ok(noticia);
+
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

@@ -1,5 +1,8 @@
 package com.elobservador.noticiero.entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,8 +14,9 @@ import java.util.Set;
 @PrimaryKeyJoinColumn(name = "id")
 public class Lector extends Usuario{
 
-    @OneToMany(mappedBy="lector", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comentario> comentariosLector= new ArrayList<>();
+    //@JsonBackReference
+    @OneToMany(mappedBy = "lector", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comentario> comentarios = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -37,12 +41,12 @@ public class Lector extends Usuario{
         this.likesNotices = likesNotices;
     }
 
-    public List<Comentario> getComentariosLector() {
-        return comentariosLector;
+    public List<Comentario> getComentarios() {
+        return comentarios;
     }
 
-    public void setComentariosLector(List<Comentario> comentariosLector) {
-        this.comentariosLector = comentariosLector;
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
     }
 
 
@@ -58,7 +62,7 @@ public class Lector extends Usuario{
     @Override
     public String toString() {
         return "Lector{" +
-                "comentariosLector=" + comentariosLector +
+                "comentarios=" + comentarios +
                 ", like=" + likesNotices +
                 ", noticiasFavoritas=" + noticiasFavoritas +
                 ", name='" + name + '\'' +

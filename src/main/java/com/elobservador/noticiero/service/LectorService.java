@@ -4,17 +4,14 @@ import com.elobservador.noticiero.dtos.LectorDto;
 import com.elobservador.noticiero.entidades.Comentario;
 import com.elobservador.noticiero.entidades.Imagen;
 import com.elobservador.noticiero.entidades.Lector;
-import com.elobservador.noticiero.entidades.Noticia;
 import com.elobservador.noticiero.enumerations.Role;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.repositorio.LectorRepository;
-import com.elobservador.noticiero.repositorio.NoticiaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
@@ -27,15 +24,9 @@ import java.util.Set;
 public class LectorService {
 
      @Autowired
-    private LectorRepository lectorRepository;
+     LectorRepository lectorRepository;
      @Autowired
      ImagenService imagenService;
-
-     @Autowired
-     private NoticiaRepository noticiaRepository;
-
-     @Autowired
-     private CometarioService cometarioService;
 
      public Lector registrar(LectorDto ingreso) throws MiExceptions{
 
@@ -71,9 +62,6 @@ public class LectorService {
          return  null;
      }
 
-
-
-     @Transactional
      public void deleteLector(String id){
 
          Optional<Lector> respuesta= lectorRepository.findById(id);
@@ -104,20 +92,15 @@ public class LectorService {
 
     public void addComentario(Comentario comentario){
 
-         if(comentario!= null) {
-
-             Optional<Lector> respuesta = lectorRepository.findById(comentario.getLector().getId());
+        Optional<Lector> respuesta = Optional.ofNullable(lectorRepository.findById(comentario.getLector().getId()).orElse(null));
              if (respuesta.isPresent()) {
                  Lector lector = respuesta.get();
-                 Comentario comentario1= cometarioService.crearComentario(comentario);
-                 lector.getComentariosLector().add(comentario1);
+                 lector.getComentarios().add(comentario);
                  lectorRepository.save(lector);
              }
          }
-     }
 
-    @Transactional
-    public void RemoveComentario( Long id ) throws MiExceptions {
+    /*public void RemoveComentario( Long id ) throws MiExceptions {
         try {
             Comentario comentario = cometarioService.getOne(id);
             if (comentario != null) {
@@ -162,7 +145,7 @@ public class LectorService {
          noticiaRepository.save(noticia1);
 
 
-     }
+     }*/
 
     private void validar(LectorDto lector)throws MiExceptions {
         if(lector.getName()== null || lector.getName().isEmpty()){
