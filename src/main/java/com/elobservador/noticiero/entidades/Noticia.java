@@ -2,6 +2,7 @@
 package com.elobservador.noticiero.entidades;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -26,26 +27,31 @@ public class Noticia implements Serializable {
 
     @ManyToOne
     private Periodista periodista;
-
     @OneToOne
     private Imagen imagen;
 
     @OneToMany(mappedBy = "noticia", fetch = FetchType.EAGER)
-    private Set<Imagen> albumImagenes = new HashSet<>();
+    private List<Imagen> albumImagenes = new ArrayList<>();
 
     private boolean estadoNoticia;
 
     @Temporal(TemporalType.DATE)
     private Date alta;
 
-    //@JsonBackReference
-    @OneToMany(mappedBy = "noticia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinTable(name = "Comentarios_Noticias",
+            joinColumns = @JoinColumn(name = "noticia_id"),
+            inverseJoinColumns = @JoinColumn(name = "comentario_id"))
     private List<Comentario> comentarios = new ArrayList<>();
 
     @ManyToMany(mappedBy = "likesNotices")
     private List<Lector> lectorLikes = new ArrayList<>();
 
     private  int cantidadDeMegusta = 0;
+
+    @ManyToMany(mappedBy = "noticiasFavoritas")
+    private Set<Lector> lectorsFavorit = new HashSet<>();
 
 
 
@@ -151,12 +157,33 @@ public class Noticia implements Serializable {
         this.comentarios = comentarios;
     }
 
-    public Set<Imagen> getAlbumImagenes() {
+    public List<Imagen> getAlbumImagenes() {
         return albumImagenes;
     }
 
-    public void setAlbumImagenes(Set<Imagen> albumImagenes) {
+    public void setAlbumImagenes(List<Imagen> albumImagenes) {
         this.albumImagenes = albumImagenes;
+    }
+
+    public Set<Lector> getLectorsFavorit() {
+        return lectorsFavorit;
+    }
+
+    public void setLectorsFavorit(Set<Lector> lectorsFavorit) {
+        this.lectorsFavorit = lectorsFavorit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Noticia noticia = (Noticia) o;
+        return estadoNoticia == noticia.estadoNoticia && cantidadDeMegusta == noticia.cantidadDeMegusta && Objects.equals(id, noticia.id) && Objects.equals(titulo, noticia.titulo) && Objects.equals(copete, noticia.copete) && Objects.equals(cuerpo, noticia.cuerpo) && Objects.equals(periodista, noticia.periodista) && Objects.equals(imagen, noticia.imagen) && Objects.equals(albumImagenes, noticia.albumImagenes) && Objects.equals(alta, noticia.alta) && Objects.equals(comentarios, noticia.comentarios) && Objects.equals(lectorLikes, noticia.lectorLikes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, titulo, copete, cuerpo, periodista, imagen, albumImagenes, estadoNoticia, alta, comentarios, lectorLikes, cantidadDeMegusta);
     }
 
     @Override

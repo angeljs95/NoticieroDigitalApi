@@ -38,7 +38,7 @@ public class NoticiaService {
             return null;
         }
         Noticia noticiaNew= new Noticia();
-        //Principales Atributos
+        //atributos de entidad
         noticiaNew.setTitulo(noticia.getTitulo());
         noticiaNew.setCopete(noticia.getCopete());
         noticiaNew.setCuerpo(noticia.getCuerpo());
@@ -52,8 +52,6 @@ public class NoticiaService {
         if (imagen != null) {
             noticiaNew.setImagen(imagen);
         }
-        periodista.getNoticias().add(noticiaNew);
-        periodistaService.save(periodista);
        return noticiaRepository.save(noticiaNew);
     }
     
@@ -112,26 +110,12 @@ public class NoticiaService {
 
     public Noticia comentarNoticia(Comentario comentario) {
         if (comentario != null) {
-
             Noticia noticia = getNew(comentario.getNoticia().getId());
             noticia.getComentarios().add(comentario);
-            lectorService.addComentario(comentario);
             return noticiaRepository.save(noticia);
         }
         return null;
     }
-
-    public Noticia replyComentario(Comentario comentario) {
-
-        if (comentario != null) {
-            Noticia noticia = getNew(comentario.getNoticia().getId());
-            noticia.getComentarios().add(comentario);
-            periodistaService.replyComentario(comentario);
-            return noticiaRepository.save(noticia);
-        }
-        return null;
-    }
-
 
 
     private void validar(NoticiaDto noticia) throws MiExceptions{

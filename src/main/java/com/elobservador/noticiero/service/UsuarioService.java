@@ -15,6 +15,11 @@ public class UsuarioService {
     UsuarioRepository usuarioRepository;
 
     @Transactional
+    public Usuario getUser(String id) {
+        return usuarioRepository.findById(id).orElse(null);
+
+    }
+    @Transactional
     public void cambiarEstado(String id) {
         Optional<Usuario> respuesta = usuarioRepository.findById(id);
         if (respuesta.isPresent()) {

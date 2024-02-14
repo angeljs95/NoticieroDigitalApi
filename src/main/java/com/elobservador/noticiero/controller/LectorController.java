@@ -14,6 +14,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -25,9 +26,10 @@ public class LectorController {
     private LectorService lectorService;
 
     @PostMapping("/register")
-    public ResponseEntity<Lector> registerLector(@RequestBody LectorDto ingreso, ModelMap model) throws MiExceptions {
+    public ResponseEntity<Lector> registerLector(@RequestPart MultipartFile archivo, @RequestPart LectorDto ingreso) throws MiExceptions {
 
         try {
+            ingreso.setArchivo(archivo);
             Lector newlector= lectorService.registrar(ingreso);
             return ResponseEntity.ok(newlector);
         } catch (MiExceptions ex) {;

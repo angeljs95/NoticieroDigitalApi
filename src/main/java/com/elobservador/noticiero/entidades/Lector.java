@@ -4,31 +4,30 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name= "Lectores")
 @PrimaryKeyJoinColumn(name = "id")
 public class Lector extends Usuario{
 
-    //@JsonBackReference
-    @OneToMany(mappedBy = "lector", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comentario> comentarios = new ArrayList<>();
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(
             name = "likes",
             joinColumns = @JoinColumn(name = "lector_id"),
             inverseJoinColumns = @JoinColumn(name = "noticia_id"))
     private List<Noticia> likesNotices = new ArrayList<>();
 
-    @OneToMany
-    @Column(name="noticias_favoritas")
-    @JoinColumn(name = "noticia_id")
-   private Set<Noticia> noticiasFavoritas= new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "noticiasFavoritas",
+            joinColumns = @JoinColumn(name = "lector_id"),
+            inverseJoinColumns = @JoinColumn(name = "noticia_id"))
+    private Set<Noticia> noticiasFavoritas = new HashSet<>();
+
 
     public Lector(){}
 
@@ -58,6 +57,19 @@ public class Lector extends Usuario{
         this.noticiasFavoritas = noticiasFavoritas;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lector lector = (Lector) o;
+        return Objects.equals(comentarios, lector.comentarios) && Objects.equals(likesNotices, lector.likesNotices) && Objects.equals(noticiasFavoritas, lector.noticiasFavoritas);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(comentarios, likesNotices, noticiasFavoritas);
+    }
 
     @Override
     public String toString() {

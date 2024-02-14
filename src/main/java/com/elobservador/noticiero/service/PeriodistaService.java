@@ -13,6 +13,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.transaction.Transactional;
 import java.beans.PropertyDescriptor;
@@ -27,7 +28,7 @@ public class PeriodistaService {
     @Autowired
     ImagenService imagenService;
 
-    public Periodista registrar(PeriodistaDto periodista) throws  MiExceptions{
+    public Periodista registrar(PeriodistaDto periodista) throws MiExceptions {
         validar(periodista);
 
         Periodista newPeriodista= new Periodista();
@@ -99,6 +100,12 @@ public class PeriodistaService {
             periodista.getComentarios().add(comentario);
             periodistaRepository.save(periodista);
         }
+    }
+
+    public void addNotice(Noticia noticia) {
+        Periodista periodista = getPeriodista(noticia.getPeriodista().getId());
+        periodista.getNoticias().add(noticia);
+        periodistaRepository.save(periodista);
     }
 
     public void save(Periodista periodista) {

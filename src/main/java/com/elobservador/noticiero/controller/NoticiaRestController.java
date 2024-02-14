@@ -4,16 +4,20 @@ import com.elobservador.noticiero.dtos.ComentarioDto;
 import com.elobservador.noticiero.dtos.NoticiaDto;
 import com.elobservador.noticiero.entidades.Comentario;
 import com.elobservador.noticiero.entidades.Noticia;
+import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.excepcions.RuntimeMiExceptions;
 import com.elobservador.noticiero.service.CometarioService;
+import com.elobservador.noticiero.service.LectorService;
 import com.elobservador.noticiero.service.NoticiaService;
+import com.elobservador.noticiero.service.PeriodistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import java.util.List;
 
@@ -28,11 +32,19 @@ public class NoticiaRestController {
     @Autowired
     private CometarioService cometarioService;
 
+    @Autowired
+    private LectorService lectorService;
+
+    @Autowired
+    private PeriodistaService periodistaService;
 
   @PostMapping(value = "/created")
-    public ResponseEntity<Noticia> saveNew(@RequestBody NoticiaDto noticiadto) throws MiExceptions {
+  public ResponseEntity<Noticia> saveNew(@RequestPart NoticiaDto noticiadto, @RequestPart MultipartFile archivo) throws MiExceptions {
         try {
+            noticiadto.setArchivo(archivo);
             Noticia noticiaNew = noticiaService.saveNoticia(noticiadto);
+            //Periodista periodista= periodistaService.getPeriodista(noticiadto.getPeriodistaId());
+            periodistaService.addNotice(noticiaNew);
             return ResponseEntity.ok(noticiaNew);
 
         } catch (MiExceptions ex) {
@@ -53,7 +65,7 @@ public class NoticiaRestController {
 
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Noticia> uptateNoticia(@PathVariable long id, @RequestBody NoticiaDto noticia, ModelMap model) throws Exception {
+    public ResponseEntity<Noticia> updateNoticia(@PathVariable long id, @RequestBody NoticiaDto noticia, ModelMap model) throws Exception {
         try {
             if (noticia != null) {
                 noticia.setId(id);
@@ -101,7 +113,7 @@ public class NoticiaRestController {
         comentario.setLectorId(lectorId);
         Comentario newComentario = cometarioService.crearComentario(comentario);
         Noticia noticia = noticiaService.comentarNoticia(newComentario);
-        System.out.println(noticia.getTitulo());
+        lectorService.addComentario(newComentario);
         return ResponseEntity.ok(noticia);
     }
 
@@ -110,8 +122,18 @@ public class NoticiaRestController {
 
         comentarioDto.setLectorId(idPeriodista);
         Comentario newComentario = cometarioService.crearComentario(comentarioDto);
-        Noticia noticia = noticiaService.replyComentario(newComentario);
+        Noticia noticia = noticiaService.comentarNoticia(newComentario);
+        lectorService.addComentario(newComentario);
         return ResponseEntity.ok(noticia);
+
+    }
+
+    @GetMapping("/getCommentsByNotice/{noticiaId}")
+    public ResponseEntity<List<Comentario>> commmentByNotice(@PathVariable("noticiaId") Long id) {
+
+        List<Comentario> comments = cometarioService.getCommentsByNotice(id);
+
+        return ResponseEntity.ok(comments);
 
     }
 

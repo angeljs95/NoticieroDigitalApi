@@ -9,8 +9,8 @@ import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.repositorio.ComentarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +62,14 @@ public class CometarioService {
 
         }
 
-    @Transactional
+    public List<Comentario> getCommentsByNotice(Long id) {
+
+        return comentarioRepository.findByNoticiaId(id);
+
+
+    }
+
+    @Transactional(readOnly = true)
     public List<Comentario> getAll (){
             List<Comentario> comentarios= comentarioRepository.findAll();
         return  comentarios;

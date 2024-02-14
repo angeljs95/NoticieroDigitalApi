@@ -3,14 +3,18 @@ import com.elobservador.noticiero.dtos.PeriodistaDto;
 import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.RuntimeMiExceptions;
 import com.elobservador.noticiero.excepcions.MiExceptions;
+import com.elobservador.noticiero.service.ImagenService;
 import com.elobservador.noticiero.service.PeriodistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -21,11 +25,14 @@ public class PeriodistaRestController {
 
     @Autowired
     private PeriodistaService periodistaService;
+    @Autowired
+    ImagenService imagenService;
 
 
-    @PostMapping("/register")
-    public ResponseEntity<Periodista> registerPeriodista(@RequestBody PeriodistaDto periodista, ModelMap model) throws MiExceptions {
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Periodista> registerPeriodista(@RequestPart MultipartFile archivo, @RequestPart("periodista") PeriodistaDto periodista) throws MiExceptions {
         try {
+            periodista.setArchivo(archivo);
             Periodista newPeriodista= periodistaService.registrar(periodista);
             return ResponseEntity.ok(newPeriodista);
         } catch (MiExceptions ex) {
