@@ -3,14 +3,11 @@ package com.elobservador.noticiero.controller;
 import com.elobservador.noticiero.dtos.ComentarioDto;
 import com.elobservador.noticiero.dtos.NoticiaDto;
 import com.elobservador.noticiero.entidades.Comentario;
+import com.elobservador.noticiero.entidades.Likes;
 import com.elobservador.noticiero.entidades.Noticia;
-import com.elobservador.noticiero.entidades.Periodista;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.excepcions.RuntimeMiExceptions;
-import com.elobservador.noticiero.service.CometarioService;
-import com.elobservador.noticiero.service.LectorService;
-import com.elobservador.noticiero.service.NoticiaService;
-import com.elobservador.noticiero.service.PeriodistaService;
+import com.elobservador.noticiero.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,8 @@ public class NoticiaRestController {
 
     @Autowired
     private PeriodistaService periodistaService;
+    @Autowired
+    private LikesService likesService;
 
   @PostMapping(value = "/created")
   public ResponseEntity<Noticia> saveNew(@RequestPart NoticiaDto noticiadto, @RequestPart MultipartFile archivo) throws MiExceptions {
@@ -106,6 +105,7 @@ public class NoticiaRestController {
         }
         return ResponseEntity.ok(newsByPeriodistaId);
     }
+//---------------------------COMENTARIOS----------------------------------------------------------------
 
     @PostMapping("/newComent/{id}")
     public ResponseEntity<Noticia> comentNews(@PathVariable("id") String lectorId, @RequestBody ComentarioDto comentario) {
@@ -120,10 +120,10 @@ public class NoticiaRestController {
     @PostMapping("/replyComent/{id}")
     public ResponseEntity<Noticia> replyComentario(@PathVariable("id") String idPeriodista, @RequestBody ComentarioDto comentarioDto) {
 
-        comentarioDto.setLectorId(idPeriodista);
+        comentarioDto.setPeriodistaId(idPeriodista);
         Comentario newComentario = cometarioService.crearComentario(comentarioDto);
         Noticia noticia = noticiaService.comentarNoticia(newComentario);
-        lectorService.addComentario(newComentario);
+        periodistaService.replyComentario(newComentario);
         return ResponseEntity.ok(noticia);
 
     }
@@ -134,7 +134,24 @@ public class NoticiaRestController {
         List<Comentario> comments = cometarioService.getCommentsByNotice(id);
 
         return ResponseEntity.ok(comments);
+    }
+    //----------------------lIKES--------------------------------------------------------------
 
+    @PostMapping("/addLike/{idNoticia}")
+    public ResponseEntity<Noticia> addLike(@PathVariable("idNoticia") Long idNoticia, @RequestBody Likes like) {
+
+        if (like.getLector() != null) {
+            System.out.println("entro");
+            Noticia noticia = noticiaService.getNew(idNoticia);
+            like.setNoticia(noticia);
+            likesService.addLike(like);
+            noticiaService.darlike(noticia);
+            System.out.println("salio");
+
+            return ResponseEntity.ok(noticia);
+        }
+        System.out.println("fallo");
+        return null;
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

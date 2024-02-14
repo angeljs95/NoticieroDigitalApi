@@ -45,8 +45,8 @@ public class Noticia implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "comentario_id"))
     private List<Comentario> comentarios = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "likesNotices")
-    private List<Lector> lectorLikes = new ArrayList<>();
+    //@ManyToMany(mappedBy = "likesNotices")
+    // private List<Lector> lectorLikes = new ArrayList<>();
 
     private  int cantidadDeMegusta = 0;
 
@@ -61,13 +61,13 @@ public class Noticia implements Serializable {
 
     }
 
-    public List<Lector> getLectorLikes() {
+   /* public List<Lector> getLectorLikes() {
         return lectorLikes;
     }
 
     public void setLectorLikes(List<Lector> lectorLikes) {
         this.lectorLikes = lectorLikes;
-    }
+    }*/
 
     public int getCantidadDeMegusta() {
         return cantidadDeMegusta;
@@ -178,12 +178,12 @@ public class Noticia implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Noticia noticia = (Noticia) o;
-        return estadoNoticia == noticia.estadoNoticia && cantidadDeMegusta == noticia.cantidadDeMegusta && Objects.equals(id, noticia.id) && Objects.equals(titulo, noticia.titulo) && Objects.equals(copete, noticia.copete) && Objects.equals(cuerpo, noticia.cuerpo) && Objects.equals(periodista, noticia.periodista) && Objects.equals(imagen, noticia.imagen) && Objects.equals(albumImagenes, noticia.albumImagenes) && Objects.equals(alta, noticia.alta) && Objects.equals(comentarios, noticia.comentarios) && Objects.equals(lectorLikes, noticia.lectorLikes);
+        return estadoNoticia == noticia.estadoNoticia && cantidadDeMegusta == noticia.cantidadDeMegusta && Objects.equals(id, noticia.id) && Objects.equals(titulo, noticia.titulo) && Objects.equals(copete, noticia.copete) && Objects.equals(cuerpo, noticia.cuerpo) && Objects.equals(periodista, noticia.periodista) && Objects.equals(imagen, noticia.imagen) && Objects.equals(albumImagenes, noticia.albumImagenes) && Objects.equals(alta, noticia.alta) && Objects.equals(comentarios, noticia.comentarios);// && Objects.equals(lectorLikes, noticia.lectorLikes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, titulo, copete, cuerpo, periodista, imagen, albumImagenes, estadoNoticia, alta, comentarios, lectorLikes, cantidadDeMegusta);
+        return Objects.hash(id, titulo, copete, cuerpo, periodista, imagen, albumImagenes, estadoNoticia, alta, comentarios, /*lectorLikes,*/ cantidadDeMegusta);
     }
 
     @Override

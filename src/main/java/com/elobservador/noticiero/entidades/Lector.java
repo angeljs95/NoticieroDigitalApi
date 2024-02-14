@@ -15,12 +15,12 @@ public class Lector extends Usuario{
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comentario> comentarios = new ArrayList<>();
 
-    @OneToMany
+    /*@OneToMany
     @JoinTable(
             name = "likes",
             joinColumns = @JoinColumn(name = "lector_id"),
             inverseJoinColumns = @JoinColumn(name = "noticia_id"))
-    private List<Noticia> likesNotices = new ArrayList<>();
+    private List<Noticia> likesNotices = new ArrayList<>();*/
 
     @ManyToMany
     @JoinTable(name = "noticiasFavoritas",
@@ -32,13 +32,13 @@ public class Lector extends Usuario{
     public Lector(){}
 
 
-    public List<Noticia> getLikesNotices() {
+   /* public List<Noticia> getLikesNotices() {
         return likesNotices;
     }
 
     public void setLikesNotices(List<Noticia> likesNotices) {
         this.likesNotices = likesNotices;
-    }
+    }*/
 
     public List<Comentario> getComentarios() {
         return comentarios;
@@ -63,19 +63,19 @@ public class Lector extends Usuario{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Lector lector = (Lector) o;
-        return Objects.equals(comentarios, lector.comentarios) && Objects.equals(likesNotices, lector.likesNotices) && Objects.equals(noticiasFavoritas, lector.noticiasFavoritas);
+        return Objects.equals(comentarios, lector.comentarios) /*&& Objects.equals(likesNotices, lector.likesNotices)*/ && Objects.equals(noticiasFavoritas, lector.noticiasFavoritas);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(comentarios, likesNotices, noticiasFavoritas);
+        return Objects.hash(comentarios/*, likesNotices*/, noticiasFavoritas);
     }
 
     @Override
     public String toString() {
         return "Lector{" +
                 "comentarios=" + comentarios +
-                ", like=" + likesNotices +
+                // ", like=" + likesNotices +
                 ", noticiasFavoritas=" + noticiasFavoritas +
                 ", name='" + name + '\'' +
                 ", document=" + document +

@@ -117,6 +117,13 @@ public class NoticiaService {
         return null;
     }
 
+    public Noticia darlike(Noticia noticia) {
+        System.out.println(noticia.getCantidadDeMegusta());
+        noticia.darLike();
+        System.out.println(noticia.getCantidadDeMegusta());
+        return noticiaRepository.save(noticia);
+    }
+
 
     private void validar(NoticiaDto noticia) throws MiExceptions{
         if (noticia.getTitulo()== null || noticia.getTitulo().isEmpty()){
