@@ -20,7 +20,10 @@ public class Lector extends Usuario{
             name = "likes",
             joinColumns = @JoinColumn(name = "lector_id"),
             inverseJoinColumns = @JoinColumn(name = "noticia_id"))
-    private List<Noticia> likesNotices = new ArrayList<>();*/
+    private List<> likesNotices = new ArrayList<>();*/
+
+    @OneToMany(mappedBy = "lector", cascade = CascadeType.ALL)
+    private List<Likes> likes = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "noticiasFavoritas",
@@ -39,6 +42,14 @@ public class Lector extends Usuario{
     public void setLikesNotices(List<Noticia> likesNotices) {
         this.likesNotices = likesNotices;
     }*/
+
+    public List<Likes> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Likes> likes) {
+        this.likes = likes;
+    }
 
     public List<Comentario> getComentarios() {
         return comentarios;
@@ -75,15 +86,18 @@ public class Lector extends Usuario{
     public String toString() {
         return "Lector{" +
                 "comentarios=" + comentarios +
-                // ", like=" + likesNotices +
+                ", likes=" + likes +
                 ", noticiasFavoritas=" + noticiasFavoritas +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", document=" + document +
                 ", age=" + age +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", address='" + address + '\'' +
                 ", role=" + role +
+                ", active=" + active +
                 ", imagen=" + imagen +
                 '}';
     }

@@ -4,6 +4,7 @@ import com.elobservador.noticiero.dtos.LectorDto;
 import com.elobservador.noticiero.entidades.Comentario;
 import com.elobservador.noticiero.entidades.Imagen;
 import com.elobservador.noticiero.entidades.Lector;
+import com.elobservador.noticiero.entidades.Likes;
 import com.elobservador.noticiero.enumerations.Role;
 import com.elobservador.noticiero.excepcions.MiExceptions;
 import com.elobservador.noticiero.repositorio.LectorRepository;
@@ -98,6 +99,19 @@ public class LectorService {
                  lector.getComentarios().add(comentario);
                  lectorRepository.save(lector);
              }
+    }
+
+    public void addLike(Likes likes) {
+        Lector lector = lectorRepository.findById(likes.getLector().getId()).orElse(null);
+        lector.getLikes().add(likes);
+        lectorRepository.save(lector);
+    }
+
+    public void unlike(Likes likes) {
+        Lector lector = lectorRepository.findById(likes.getLector().getId()).orElse(null);
+        lector.getLikes().remove(likes);
+        lectorRepository.save(lector);
+
          }
 
 

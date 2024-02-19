@@ -3,17 +3,18 @@ package com.elobservador.noticiero.entidades;
 import javax.persistence.*;
 
 @Entity
-@IdClass(LikeId.class)
 public class Likes {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;
+
     @ManyToOne
-    @JoinColumn(name = "lector_id")
+    @JoinColumn(name = "lector_id", unique = false)
     private Lector lector;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "noticia_id")
+    @JoinColumn(name = "noticia_id", unique = false)
     private Noticia noticia;
 
     public Likes(Lector lector, Noticia noticia) {
@@ -23,6 +24,14 @@ public class Likes {
 
     public Likes() {
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Lector getLector() {

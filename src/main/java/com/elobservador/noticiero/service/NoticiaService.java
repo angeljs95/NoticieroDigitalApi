@@ -117,13 +117,20 @@ public class NoticiaService {
         return null;
     }
 
-    public Noticia darlike(Noticia noticia) {
-        System.out.println(noticia.getCantidadDeMegusta());
+    public void darlike(Likes likes) {
+        Noticia noticia = noticiaRepository.findById(likes.getNoticia().getId()).orElse(null);
         noticia.darLike();
-        System.out.println(noticia.getCantidadDeMegusta());
-        return noticiaRepository.save(noticia);
+        noticia.getLikes().add(likes);
+        noticiaRepository.save(noticia);
     }
 
+    public void unlike(Likes likes) {
+
+        Noticia noticia = noticiaRepository.findById(likes.getNoticia().getId()).orElse(null);
+        noticia.sacarLike();
+        noticia.getLikes().remove(likes);
+        noticiaRepository.save(noticia);
+    }
 
     private void validar(NoticiaDto noticia) throws MiExceptions{
         if (noticia.getTitulo()== null || noticia.getTitulo().isEmpty()){

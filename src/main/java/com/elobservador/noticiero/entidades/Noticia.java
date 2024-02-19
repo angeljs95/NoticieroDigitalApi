@@ -30,7 +30,7 @@ public class Noticia implements Serializable {
     @OneToOne
     private Imagen imagen;
 
-    @OneToMany(mappedBy = "noticia", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER) //mappedBy = "noticia"
     private List<Imagen> albumImagenes = new ArrayList<>();
 
     private boolean estadoNoticia;
@@ -45,8 +45,8 @@ public class Noticia implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "comentario_id"))
     private List<Comentario> comentarios = new ArrayList<>();
 
-    //@ManyToMany(mappedBy = "likesNotices")
-    // private List<Lector> lectorLikes = new ArrayList<>();
+    @OneToMany(mappedBy = "noticia", cascade = CascadeType.ALL)
+    private List<Likes> likes = new ArrayList<>();
 
     private  int cantidadDeMegusta = 0;
 
@@ -61,13 +61,13 @@ public class Noticia implements Serializable {
 
     }
 
-   /* public List<Lector> getLectorLikes() {
-        return lectorLikes;
+    public List<Likes> getLikes() {
+        return likes;
     }
 
-    public void setLectorLikes(List<Lector> lectorLikes) {
-        this.lectorLikes = lectorLikes;
-    }*/
+    public void setLikes(List<Likes> likes) {
+        this.likes = likes;
+    }
 
     public int getCantidadDeMegusta() {
         return cantidadDeMegusta;

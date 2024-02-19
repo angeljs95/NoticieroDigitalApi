@@ -3,6 +3,7 @@ package com.elobservador.noticiero.controller;
 import com.elobservador.noticiero.dtos.ComentarioDto;
 import com.elobservador.noticiero.dtos.NoticiaDto;
 import com.elobservador.noticiero.entidades.Comentario;
+import com.elobservador.noticiero.entidades.Lector;
 import com.elobservador.noticiero.entidades.Likes;
 import com.elobservador.noticiero.entidades.Noticia;
 import com.elobservador.noticiero.excepcions.MiExceptions;
@@ -137,21 +138,39 @@ public class NoticiaRestController {
     }
     //----------------------lIKES--------------------------------------------------------------
 
-    @PostMapping("/addLike/{idNoticia}")
-    public ResponseEntity<Noticia> addLike(@PathVariable("idNoticia") Long idNoticia, @RequestBody Likes like) {
+    @PostMapping("/{idNoticia}/like/{idLector}")
+    public ResponseEntity<String> Like(@PathVariable("idNoticia") Long idNoticia, @PathVariable("idLector") String idLector) {
 
-        if (like.getLector() != null) {
-            System.out.println("entro");
-            Noticia noticia = noticiaService.getNew(idNoticia);
-            like.setNoticia(noticia);
-            likesService.addLike(like);
-            noticiaService.darlike(noticia);
-            System.out.println("salio");
+        Noticia noticia = noticiaService.getNew(idNoticia);
+        Lector lector = lectorService.getLector(idLector);
 
-            return ResponseEntity.ok(noticia);
+        if (lector != null && noticia != null) {
+            // Likes likes=
+            String mensaje = likesService.Likes(lector, noticia);
+            //   lectorService.addLike(likes);
+            // noticiaService.darlike(likes);
+            return ResponseEntity.ok(mensaje);
         }
-        System.out.println("fallo");
         return null;
+    }
+
+    @DeleteMapping("/{idNoticia}/unlike/{idLector}")
+    public ResponseEntity<String> unlike(@PathVariable("idNoticia") Long idNoticia, @PathVariable("idLector") String idLector) {
+
+//        Noticia noticia= noticiaService.getNew(idNoticia);
+//        Lector lector= lectorService.getLector(idLector);
+//
+        Likes likes = likesService.findByLectorAndNoticia(idNoticia, idLector);
+        if (likes != null) {
+            likesService.removeLike(likes);
+            //  noticiaService.unlike(likes);
+            //lectorService.unlike(likes);
+
+        }
+
+        // Likes like= likesService.getLike(id);
+        //  likesService.removeLike(like);
+        return ResponseEntity.ok(" se ha eliminado el like" + likes.getLector().getName());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

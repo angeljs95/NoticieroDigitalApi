@@ -19,7 +19,7 @@ public class Periodista extends Usuario {
 
     private Integer matricula;
 
-    @OneToMany(mappedBy = "periodista", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY) //mappedBy = "periodista",
     private List<Imagen> imagenesPeriodista = new ArrayList<>();
 
     @JsonBackReference

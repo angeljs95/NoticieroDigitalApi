@@ -4,6 +4,7 @@ package com.elobservador.noticiero.entidades;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Arrays;
 
 
 @Entity
@@ -21,13 +22,6 @@ public class Imagen {
     @Basic(fetch = FetchType.LAZY)
     private byte [] contenido;
 
-    @ManyToOne
-    @JoinColumn(name = "noticia_id")
-    private Noticia noticia;
-
-    @ManyToOne
-    @JoinColumn(name = "periodista_id")
-    private Periodista periodista;
 
     public Imagen(){
 
@@ -65,19 +59,4 @@ public class Imagen {
         this.contenido = contenido;
     }
 
-    public Noticia getNoticia() {
-        return noticia;
-    }
-
-    public void setNoticia(Noticia noticia) {
-        this.noticia = noticia;
-    }
-
-    public Periodista getPeriodista() {
-        return periodista;
-    }
-
-    public void setPeriodista(Periodista periodista) {
-        this.periodista = periodista;
-    }
 }
